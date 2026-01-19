@@ -124,6 +124,32 @@ const HostelScreen: React.FC = () => {
         fetchData();
     };
 
+    const handleDeleteRoom = (id: number) => {
+        Alert.alert(
+            'Delete Room',
+            'Are you sure you want to delete this room?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            const response = await hostelService.deleteRooms([id]);
+                            if (response.success) {
+                                fetchData();
+                            } else {
+                                Alert.alert('Error', 'Failed to delete room');
+                            }
+                        } catch (error) {
+                            Alert.alert('Error', 'An error occurred');
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     const renderRoomItem = ({ item }: { item: HostelRoom }) => (
         <View style={styles.card}>
             <View style={styles.cardHeader}>
@@ -156,6 +182,11 @@ const HostelScreen: React.FC = () => {
                         {item.type}
                     </Text>
                 </View>
+                {canEdit && (
+                    <TouchableOpacity onPress={() => handleDeleteRoom(item.id)}>
+                        <Ionicons name="trash-outline" size={20} color={Colors.error.main} />
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
@@ -485,7 +516,7 @@ const styles = StyleSheet.create({
     },
     cardFooter: {
         flexDirection: 'row',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         paddingTop: 12,
         borderTopWidth: 1,
         borderTopColor: Colors.glass.border,

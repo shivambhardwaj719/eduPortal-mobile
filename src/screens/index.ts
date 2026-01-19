@@ -15,3 +15,4 @@ export { default as ProfileScreen } from './main/ProfileScreen';
 export { default as ResultsScreen } from './main/ResultsScreen';
 export { default as HostelScreen } from './main/HostelScreen';
 export { default as InventoryScreen } from './main/InventoryScreen';
+export { default as DirectoryScreen } from './main/DirectoryScreen';

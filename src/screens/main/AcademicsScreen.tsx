@@ -6,23 +6,40 @@ import {
     ScrollView,
     RefreshControl,
     TouchableOpacity,
+    Modal,
+    TextInput,
+    Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Card, FeatureCard } from '../../components/ui/Card';
 import { Colors } from '../../constants/colors';
 import { coursesService, assignmentsService, examsService } from '../../services/dataService';
 import { Course, Assignment, Exam } from '../../types';
 import { format } from 'date-fns';
+import Button from '../../components/ui/Button';
+import Input from '../../components/ui/Input';
+import { useAppSelector } from '../../hooks/useAppStore';
 
 const AcademicsScreen: React.FC = () => {
+    const { user } = useAppSelector((state) => state.auth);
+    const canEdit = user?.profile_type !== 'Student';
+
     const [refreshing, setRefreshing] = useState(false);
     const [activeTab, setActiveTab] = useState<'courses' | 'assignments' | 'exams'>('courses');
     const [courses, setCourses] = useState<Course[]>([]);
     const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [exams, setExams] = useState<Exam[]>([]);
+
+    // Modal State
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [formLoading, setFormLoading] = useState(false);
+
+    const [newCourse, setNewCourse] = useState({ name: '', code: '', description: '', credit_hours: '' });
+    const [newAssignment, setNewAssignment] = useState({ title: '', course_id: '', description: '', due_date: '', total_marks: '' });
+    const [newExam, setNewExam] = useState({ name: '', course_id: '', exam_date: '', total_marks: '', passing_marks: '' });
 
     // Sample data for UI
     const sampleCourses: Course[] = [
@@ -104,6 +121,77 @@ const AcademicsScreen: React.FC = () => {
         return colors[index % colors.length];
     };
 
+    const handleAdd = async () => {
+        setFormLoading(true);
+        try {
+            if (activeTab === 'courses') {
+                if (!newCourse.name || !newCourse.code) {
+                    Alert.alert('Error', 'Name and Code are required');
+                    setFormLoading(false);
+                    return;
+                }
+                // Determine grade_id: backend usually needs it. Defaulting to 1 for demo.
+                await coursesService.create({
+                    name: newCourse.name,
+                    code: newCourse.code,
+                    description: newCourse.description,
+                    credit_hours: parseInt(newCourse.credit_hours) || 3,
+                    grade_id: 1,
+                    is_active: true
+                });
+                Alert.alert('Success', 'Course created');
+            } else if (activeTab === 'assignments') {
+                if (!newAssignment.title || !newAssignment.course_id) {
+                    Alert.alert('Error', 'Title and Course ID are required');
+                    setFormLoading(false);
+                    return;
+                }
+                const courseId = parseInt(newAssignment.course_id);
+                if (isNaN(courseId)) { Alert.alert('Error', 'Invalid Course ID'); setFormLoading(false); return; }
+
+                await assignmentsService.create({
+                    title: newAssignment.title,
+                    description: newAssignment.description,
+                    course_id: courseId,
+                    due_date: newAssignment.due_date || new Date().toISOString().split('T')[0],
+                    total_marks: parseInt(newAssignment.total_marks) || 100,
+                    status: 'active'
+                });
+                Alert.alert('Success', 'Assignment created');
+            } else if (activeTab === 'exams') {
+                if (!newExam.name || !newExam.course_id) {
+                    Alert.alert('Error', 'Name and Course ID are required');
+                    setFormLoading(false);
+                    return;
+                }
+                const courseId = parseInt(newExam.course_id);
+                if (isNaN(courseId)) { Alert.alert('Error', 'Invalid Course ID'); setFormLoading(false); return; }
+
+                await examsService.create({
+                    name: newExam.name,
+                    exam_type: 'Mid-Term', // Default
+                    course_id: courseId,
+                    exam_date: newExam.exam_date || new Date().toISOString().split('T')[0],
+                    total_marks: parseInt(newExam.total_marks) || 100,
+                    passing_marks: parseInt(newExam.passing_marks) || 40,
+                    start_time: '09:00',
+                    end_time: '12:00'
+                });
+                Alert.alert('Success', 'Exam created');
+            }
+            setIsModalVisible(false);
+            // Reset forms
+            setNewCourse({ name: '', code: '', description: '', credit_hours: '' });
+            setNewAssignment({ title: '', course_id: '', description: '', due_date: '', total_marks: '' });
+            setNewExam({ name: '', course_id: '', exam_date: '', total_marks: '', passing_marks: '' });
+            fetchData();
+        } catch (error: any) {
+            Alert.alert('Error', error.message || 'Failed to create');
+        } finally {
+            setFormLoading(false);
+        }
+    };
+
     const tabs = [
         { key: 'courses', label: 'Courses', icon: 'book-outline' },
         { key: 'assignments', label: 'Assignments', icon: 'document-text-outline' },
@@ -121,9 +209,16 @@ const AcademicsScreen: React.FC = () => {
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.headerTitle}>Academics</Text>
-                    <TouchableOpacity style={styles.headerButton}>
-                        <Ionicons name="search-outline" size={24} color={Colors.text.primary} />
-                    </TouchableOpacity>
+                    {canEdit ? (
+                        <TouchableOpacity
+                            style={styles.headerButton}
+                            onPress={() => setIsModalVisible(true)}
+                        >
+                            <Ionicons name="add" size={24} color={Colors.text.primary} />
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={{ width: 40 }} />
+                    )}
                 </View>
 
                 {/* Tab Bar */}
@@ -254,6 +349,62 @@ const AcademicsScreen: React.FC = () => {
                     <View style={{ height: 100 }} />
                 </ScrollView>
             </SafeAreaView>
+
+            <Modal
+                visible={isModalVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setIsModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>
+                                Add {activeTab === 'courses' ? 'Course' : activeTab === 'assignments' ? 'Assignment' : 'Exam'}
+                            </Text>
+                            <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+                                <Ionicons name="close" size={24} color={Colors.text.primary} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <ScrollView contentContainerStyle={styles.formContainer}>
+                            {activeTab === 'courses' && (
+                                <>
+                                    <Input label="Course Name" value={newCourse.name} onChangeText={(t) => setNewCourse({ ...newCourse, name: t })} placeholder="Mathematics" />
+                                    <Input label="Code" value={newCourse.code} onChangeText={(t) => setNewCourse({ ...newCourse, code: t })} placeholder="MATH101" />
+                                    <Input label="Description" value={newCourse.description} onChangeText={(t) => setNewCourse({ ...newCourse, description: t })} placeholder="Description" />
+                                    <Input label="Credit Hours" value={newCourse.credit_hours} onChangeText={(t) => setNewCourse({ ...newCourse, credit_hours: t })} keyboardType="numeric" placeholder="3" />
+                                </>
+                            )}
+                            {activeTab === 'assignments' && (
+                                <>
+                                    <Input label="Title" value={newAssignment.title} onChangeText={(t) => setNewAssignment({ ...newAssignment, title: t })} placeholder="Homework 1" />
+                                    <Input label="Course ID" value={newAssignment.course_id} onChangeText={(t) => setNewAssignment({ ...newAssignment, course_id: t })} keyboardType="numeric" placeholder="1" />
+                                    <Input label="Description" value={newAssignment.description} onChangeText={(t) => setNewAssignment({ ...newAssignment, description: t })} placeholder="Details..." />
+                                    <Input label="Due Date" value={newAssignment.due_date} onChangeText={(t) => setNewAssignment({ ...newAssignment, due_date: t })} placeholder="YYYY-MM-DD" />
+                                    <Input label="Total Marks" value={newAssignment.total_marks} onChangeText={(t) => setNewAssignment({ ...newAssignment, total_marks: t })} keyboardType="numeric" placeholder="100" />
+                                </>
+                            )}
+                            {activeTab === 'exams' && (
+                                <>
+                                    <Input label="Exam Name" value={newExam.name} onChangeText={(t) => setNewExam({ ...newExam, name: t })} placeholder="Mid Term" />
+                                    <Input label="Course ID" value={newExam.course_id} onChangeText={(t) => setNewExam({ ...newExam, course_id: t })} keyboardType="numeric" placeholder="1" />
+                                    <Input label="Date" value={newExam.exam_date} onChangeText={(t) => setNewExam({ ...newExam, exam_date: t })} placeholder="YYYY-MM-DD" />
+                                    <Input label="Total Marks" value={newExam.total_marks} onChangeText={(t) => setNewExam({ ...newExam, total_marks: t })} keyboardType="numeric" placeholder="100" />
+                                    <Input label="Passing Marks" value={newExam.passing_marks} onChangeText={(t) => setNewExam({ ...newExam, passing_marks: t })} keyboardType="numeric" placeholder="40" />
+                                </>
+                            )}
+
+                            <Button
+                                title="Create"
+                                onPress={handleAdd}
+                                isLoading={formLoading}
+                                style={{ marginTop: 20 }}
+                            />
+                        </ScrollView>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -262,6 +413,33 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.background.primary,
+    },
+    // Modal Styles
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        padding: 20,
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 20,
+        maxHeight: '90%',
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: Colors.primary[900],
+    },
+    formContainer: {
+        gap: 16,
     },
     safeArea: {
         flex: 1,

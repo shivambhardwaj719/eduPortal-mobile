@@ -118,6 +118,32 @@ const InventoryScreen: React.FC = () => {
         fetchData();
     };
 
+    const handleDeleteAsset = (id: number) => {
+        Alert.alert(
+            'Delete Asset',
+            'Are you sure you want to delete this asset?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            const response = await inventoryService.deleteAssets([id]);
+                            if (response.success) {
+                                fetchData();
+                            } else {
+                                Alert.alert('Error', 'Failed to delete asset');
+                            }
+                        } catch (error) {
+                            Alert.alert('Error', 'An error occurred');
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     const renderAssetItem = ({ item }: { item: InventoryAsset }) => (
         <View style={styles.card}>
             <View style={styles.cardHeader}>
@@ -146,11 +172,16 @@ const InventoryScreen: React.FC = () => {
                 </View>
             </View>
 
-            <View style={styles.cardFooter}>
+            <View style={[styles.cardFooter, { justifyContent: 'space-between', flexDirection: 'row' }]}>
                 <View style={styles.conditionRow}>
                     <View style={[styles.dot, { backgroundColor: item.condition === 'Good' ? Colors.success.main : Colors.warning.main }]} />
                     <Text style={styles.conditionText}>{item.condition}</Text>
                 </View>
+                {canEdit && (
+                    <TouchableOpacity onPress={() => handleDeleteAsset(item.id)}>
+                        <Ionicons name="trash-outline" size={20} color={Colors.error.main} />
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );

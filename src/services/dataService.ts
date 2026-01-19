@@ -27,6 +27,17 @@ export const studentsService = {
         const response = await api.get(`${apiPaths.students.list}/${id}`);
         return response.data;
     },
+    create: async (data: Partial<Student>): Promise<Student> => {
+        const response = await api.post(apiPaths.students.create, data);
+        return response.data;
+    },
+    update: async (id: number, data: Partial<Student>): Promise<Student> => {
+        const response = await api.put(`${apiPaths.students.update}/${id}`, data);
+        return response.data;
+    },
+    delete: async (ids: number[]): Promise<void> => {
+        await api.post(apiPaths.students.delete, { ids });
+    },
 };
 
 // Grades Service
@@ -34,6 +45,17 @@ export const gradesService = {
     getAll: async (): Promise<PaginatedResponse<Grade>> => {
         const response = await api.get(apiPaths.grades.list);
         return response.data;
+    },
+    create: async (data: Partial<Grade>): Promise<Grade> => {
+        const response = await api.post(apiPaths.grades.create, data);
+        return response.data;
+    },
+    update: async (id: number, data: Partial<Grade>): Promise<Grade> => {
+        const response = await api.put(`${apiPaths.grades.update}/${id}`, data);
+        return response.data;
+    },
+    delete: async (ids: number[]): Promise<void> => {
+        await api.post(apiPaths.grades.delete, { ids });
     },
 };
 
@@ -50,6 +72,17 @@ export const coursesService = {
     getEnabled: async (): Promise<Course[]> => {
         const response = await api.get(apiPaths.courses.enabledList);
         return response.data;
+    },
+    create: async (data: Partial<Course>): Promise<Course> => {
+        const response = await api.post(apiPaths.courses.create, data);
+        return response.data;
+    },
+    update: async (id: number, data: Partial<Course>): Promise<Course> => {
+        const response = await api.put(`${apiPaths.courses.update}/${id}`, data);
+        return response.data;
+    },
+    delete: async (ids: number[]): Promise<void> => {
+        await api.post(apiPaths.courses.delete, { ids });
     },
 };
 
@@ -71,6 +104,9 @@ export const assignmentsService = {
         const response = await api.put(`${apiPaths.assignments.update}/${id}`, data);
         return response.data;
     },
+    delete: async (ids: number[]): Promise<void> => {
+        await api.post(apiPaths.assignments.delete, { ids });
+    },
 };
 
 // Exams Service
@@ -82,6 +118,17 @@ export const examsService = {
     getById: async (id: number): Promise<Exam> => {
         const response = await api.get(`${apiPaths.exams.list}/${id}`);
         return response.data;
+    },
+    create: async (data: Partial<Exam>): Promise<Exam> => {
+        const response = await api.post(apiPaths.exams.create, data);
+        return response.data;
+    },
+    update: async (id: number, data: Partial<Exam>): Promise<Exam> => {
+        const response = await api.put(`${apiPaths.exams.update}/${id}`, data);
+        return response.data;
+    },
+    delete: async (ids: number[]): Promise<void> => {
+        await api.post(apiPaths.exams.delete, { ids });
     },
 };
 
@@ -124,6 +171,17 @@ export const facultyService = {
     getById: async (id: number): Promise<Faculty> => {
         const response = await api.get(`${apiPaths.faculties.list}/${id}`);
         return response.data;
+    },
+    create: async (data: Partial<Faculty>): Promise<Faculty> => {
+        const response = await api.post(apiPaths.faculties.create, data);
+        return response.data;
+    },
+    update: async (id: number, data: Partial<Faculty>): Promise<Faculty> => {
+        const response = await api.put(`${apiPaths.faculties.update}/${id}`, data);
+        return response.data;
+    },
+    delete: async (ids: number[]): Promise<void> => {
+        await api.post(apiPaths.faculties.delete, { ids });
     },
 };
 

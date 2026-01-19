@@ -55,7 +55,7 @@ const MoreScreen: React.FC = () => {
                 { icon: 'bed', title: 'Hostel', subtitle: 'Room & Mess', color: Colors.secondary[500], screen: 'Hostel' },
                 { icon: 'bus', title: 'Transport', subtitle: 'Bus Routes', color: Colors.accent.orange },
                 { icon: 'cart', title: 'Inventory', subtitle: 'School Assets', color: Colors.accent.purple, screen: 'Inventory' },
-                { icon: 'people', title: 'Directory', subtitle: 'Staff & Students', color: Colors.accent.cyan },
+                { icon: 'people', title: 'Directory', subtitle: 'Staff & Students', color: Colors.accent.cyan, screen: 'Directory' },
             ],
         },
         {
