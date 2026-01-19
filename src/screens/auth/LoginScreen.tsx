@@ -13,11 +13,12 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import Logo from '../../components/Logo';
 import { Colors } from '../../constants/colors';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppStore';
 import { login, clearError } from '../../store/slices/authSlice';
@@ -26,21 +27,33 @@ import { RootStackParamList } from '../../types';
 const { width, height } = Dimensions.get('window');
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
+type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC = () => {
     const navigation = useNavigation<LoginScreenNavigationProp>();
+    const route = useRoute<LoginScreenRouteProp>();
     const dispatch = useAppDispatch();
     const { isLoading, error } = useAppSelector((state) => state.auth);
 
-    const [username, setUsername] = useState('');
+    // Get domain info from route params
+    const domain = route.params?.domain || '';
+    const schoolId = route.params?.schoolId || '1';
+    const schoolName = route.params?.schoolName || 'Your Institution';
+
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
 
     const handleLogin = async () => {
-        if (!username.trim() || !password.trim()) {
+        if (!email.trim() || !password.trim()) {
             return;
         }
-        dispatch(login({ username, password }));
+        dispatch(login({
+            email,
+            password,
+            school_id: schoolId,
+            host: domain,
+        }));
     };
 
     React.useEffect(() => {
@@ -65,6 +78,14 @@ const LoginScreen: React.FC = () => {
             <View style={styles.decorativeCircle3} />
 
             <SafeAreaView style={styles.safeArea}>
+                {/* Back Button */}
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => navigation.goBack()}
+                >
+                    <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+                </TouchableOpacity>
+
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={styles.keyboardView}
@@ -74,18 +95,19 @@ const LoginScreen: React.FC = () => {
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     >
-                        {/* Header Section */}
+                        {/* Header Section with SikshaNeeti Logo */}
                         <View style={styles.header}>
-                            <View style={styles.logoContainer}>
-                                <LinearGradient
-                                    colors={Colors.gradients.primary}
-                                    style={styles.logoGradient}
-                                >
-                                    <Ionicons name="school" size={40} color={Colors.white} />
-                                </LinearGradient>
-                            </View>
-                            <Text style={styles.title}>EduPortal</Text>
-                            <Text style={styles.subtitle}>Welcome back! Please sign in to continue</Text>
+                            <Logo size="large" showTagline variant="dark" />
+
+                            {/* School Badge */}
+                            {domain && (
+                                <View style={styles.schoolBadge}>
+                                    <Ionicons name="business" size={16} color={Colors.success.main} />
+                                    <Text style={styles.schoolBadgeText}>{schoolName}</Text>
+                                </View>
+                            )}
+
+                            <Text style={styles.subtitle}>Sign in to continue</Text>
                         </View>
 
                         {/* Login Card */}
@@ -98,15 +120,16 @@ const LoginScreen: React.FC = () => {
                                 </View>
                             )}
 
-                            {/* Username Input */}
+                            {/* Email Input */}
                             <Input
-                                label="Username or Email"
-                                placeholder="Enter your username"
-                                icon="person-outline"
-                                value={username}
-                                onChangeText={setUsername}
+                                label="Email"
+                                placeholder="Enter your email"
+                                icon="mail-outline"
+                                value={email}
+                                onChangeText={setEmail}
                                 autoCapitalize="none"
                                 autoCorrect={false}
+                                keyboardType="email-address"
                             />
 
                             {/* Password Input */}
@@ -226,37 +249,45 @@ const styles = StyleSheet.create({
         borderRadius: 75,
         backgroundColor: Colors.secondary[500] + '10',
     },
+    backButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 14,
+        backgroundColor: Colors.glass.background,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: Colors.glass.border,
+        marginLeft: 20,
+        marginTop: 10,
+    },
     header: {
         alignItems: 'center',
         marginBottom: 32,
         marginTop: 20,
     },
-    logoContainer: {
-        marginBottom: 16,
-    },
-    logoGradient: {
-        width: 80,
-        height: 80,
-        borderRadius: 24,
-        justifyContent: 'center',
+    schoolBadge: {
+        flexDirection: 'row',
         alignItems: 'center',
-        shadowColor: Colors.primary[500],
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.4,
-        shadowRadius: 16,
-        elevation: 12,
+        gap: 8,
+        backgroundColor: Colors.success.main + '15',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 20,
+        marginTop: 16,
+        borderWidth: 1,
+        borderColor: Colors.success.main + '30',
     },
-    title: {
-        fontSize: 32,
-        fontWeight: '800',
-        color: Colors.text.primary,
-        letterSpacing: -0.5,
-        marginBottom: 8,
+    schoolBadgeText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: Colors.success.main,
     },
     subtitle: {
         fontSize: 16,
         color: Colors.text.tertiary,
         textAlign: 'center',
+        marginTop: 12,
     },
     loginCard: {
         backgroundColor: Colors.glass.background,

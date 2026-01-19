@@ -1,3 +1,4 @@
+export { default as DomainScreen } from './auth/DomainScreen';
 export { default as LoginScreen } from './auth/LoginScreen';
 export { default as ForgotPasswordScreen } from './auth/ForgotPasswordScreen';
 export { default as DashboardScreen } from './main/DashboardScreen';
@@ -12,3 +13,5 @@ export { default as ScheduleScreen } from './main/ScheduleScreen';
 export { default as SettingsScreen } from './main/SettingsScreen';
 export { default as ProfileScreen } from './main/ProfileScreen';
 export { default as ResultsScreen } from './main/ResultsScreen';
+export { default as HostelScreen } from './main/HostelScreen';
+export { default as InventoryScreen } from './main/InventoryScreen';

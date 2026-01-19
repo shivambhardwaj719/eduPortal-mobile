@@ -9,6 +9,8 @@ import ScheduleScreen from '../screens/main/ScheduleScreen';
 import SettingsScreen from '../screens/main/SettingsScreen';
 import ProfileScreen from '../screens/main/ProfileScreen';
 import ResultsScreen from '../screens/main/ResultsScreen';
+import HostelScreen from '../screens/main/HostelScreen';
+import InventoryScreen from '../screens/main/InventoryScreen';
 
 export type MainStackParamList = {
     MainTabs: undefined;
@@ -19,6 +21,8 @@ export type MainStackParamList = {
     Settings: undefined;
     Profile: undefined;
     Results: undefined;
+    Hostel: undefined;
+    Inventory: undefined;
 };
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
@@ -39,6 +43,8 @@ const MainStackNavigator: React.FC = () => {
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="Results" component={ResultsScreen} />
+            <Stack.Screen name="Hostel" component={HostelScreen} />
+            <Stack.Screen name="Inventory" component={InventoryScreen} />
         </Stack.Navigator>
     );
 };

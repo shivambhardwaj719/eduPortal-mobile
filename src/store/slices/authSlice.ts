@@ -18,9 +18,21 @@ export const login = createAsyncThunk(
     async (credentials: LoginCredentials, { rejectWithValue }) => {
         try {
             const response = await authService.login(credentials);
-            return response;
+
+            // Fetch user profile after login
+            let user = response.user;
+            if (!user || !user.id) {
+                try {
+                    user = await authService.getUserProfile();
+                } catch (e) {
+                    console.log('Failed to fetch user profile:', e);
+                }
+            }
+
+            return { ...response, user };
         } catch (error: any) {
-            return rejectWithValue(error.response?.data?.message || 'Login failed');
+            const message = error.message || error.response?.data?.message || 'Login failed';
+            return rejectWithValue(message);
         }
     }
 );

@@ -20,9 +20,10 @@ export interface AuthState {
 }
 
 export interface LoginCredentials {
-    username: string;
+    email: string;
     password: string;
-    domain?: string;
+    school_id?: string;
+    host?: string;
 }
 
 // Student Types
@@ -190,11 +191,73 @@ export interface BookIssue {
     book_id: number;
     book: Book;
     student_id: number;
-    student: Student;
     issue_date: string;
     due_date: string;
     return_date?: string;
+    actual_return_date?: string;
+    fine_amount?: number;
     status: 'issued' | 'returned' | 'overdue';
+}
+
+// Hostel Types
+export interface Hostel {
+    id: number;
+    name: string;
+    warden_name: string;
+    country_number_code: number;
+    warden_phone: string;
+}
+
+export interface HostelRoom {
+    id: number;
+    hostel: Hostel;
+    room_number: string;
+    capacity: number;
+    floor: number;
+    type: string;
+    cost_per_bed: string;
+    current_occupancy?: number;
+}
+
+export interface HostelMeal {
+    id: number;
+    day: string;
+    breakfast: string;
+    lunch: string;
+    dinner: string;
+    category: string;
+    color: string;
+}
+
+export interface HostelAdmission {
+    id: number;
+    student: Student;
+    hostel: Hostel;
+    room_no: HostelRoom;
+    bed_no: string;
+    admission_date: string;
+    status: string;
+}
+
+// Inventory Types
+export interface InventoryAsset {
+    id: number;
+    name: string;
+    category: string;
+    quantity: number;
+    condition: string;
+    location: string;
+    purchase_date: string;
+    price: string;
+}
+
+export interface InventoryVehicle {
+    id: number;
+    vehicle_number: string;
+    model: string;
+    driver_name: string;
+    capacity: number;
+    status: string;
 }
 
 // API Response Types
@@ -225,7 +288,8 @@ export interface DashboardStats {
 
 // Navigation Types
 export type RootStackParamList = {
-    Login: undefined;
+    Domain: undefined;
+    Login: { domain: string; schoolId: string; schoolName?: string } | undefined;
     ForgotPassword: undefined;
     Main: undefined;
     StudentDetails: { studentId: number };

@@ -192,6 +192,14 @@ export const notificationsService = {
     },
 };
 
+// Dashboard Service
+export const dashboardService = {
+    getStats: async (): Promise<any> => {
+        const response = await api.get(apiPaths.dashboard.stats);
+        return response.data;
+    },
+};
+
 export default {
     students: studentsService,
     grades: gradesService,
@@ -205,4 +213,5 @@ export default {
     library: libraryService,
     finance: financeService,
     notifications: notificationsService,
+    dashboard: dashboardService,
 };

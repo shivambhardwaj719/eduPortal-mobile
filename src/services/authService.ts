@@ -2,6 +2,16 @@ import api, { saveTokens, clearTokens } from './api';
 import { apiPaths } from '../constants/apiPaths';
 import { User, LoginCredentials, ApiResponse } from '../types';
 
+interface LoginApiResponse {
+    success: boolean;
+    message: string;
+    data: {
+        access: string;
+        refresh: string;
+        user?: User;
+    };
+}
+
 interface LoginResponse {
     token: string;
     refresh_token: string;
@@ -11,10 +21,28 @@ interface LoginResponse {
 export const authService = {
     // Login
     login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
-        const response = await api.post<LoginResponse>(apiPaths.auth.login, credentials);
-        const { token, refresh_token, user } = response.data;
-        await saveTokens(token, refresh_token);
-        return response.data;
+        // Add default school_id and host if not provided
+        const loginData = {
+            email: credentials.email,
+            password: credentials.password,
+            school_id: credentials.school_id || '1',
+            host: credentials.host || window?.location?.origin || 'https://app.sikshaneeti.com',
+        };
+
+        const response = await api.post<LoginApiResponse>(apiPaths.auth.login, loginData);
+
+        if (response.data.success) {
+            const { access, refresh, user } = response.data.data;
+            await saveTokens(access, refresh);
+
+            return {
+                token: access,
+                refresh_token: refresh,
+                user: user || {} as User,
+            };
+        }
+
+        throw new Error(response.data.message || 'Login failed');
     },
 
     // Logout
@@ -44,10 +72,23 @@ export const authService = {
         await api.post(apiPaths.auth.resetPassword, { token, password });
     },
 
-    // Check domain
-    checkDomain: async (domain: string): Promise<boolean> => {
-        const response = await api.post(apiPaths.auth.checkDomain, { domain });
-        return response.data.valid;
+    // Check domain - returns school info if valid
+    checkDomain: async (domain: string): Promise<{
+        success: boolean;
+        data?: { school_id: number; school_name?: string };
+        message?: string;
+    }> => {
+        try {
+            const response = await api.get(apiPaths.auth.checkDomain, {
+                params: { domain }
+            });
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Domain verification failed',
+            };
+        }
     },
 
     // Set MPIN

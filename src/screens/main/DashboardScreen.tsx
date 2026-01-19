@@ -18,7 +18,7 @@ import { Card, StatCard, FeatureCard } from '../../components/ui/Card';
 import { Colors } from '../../constants/colors';
 import { useAppSelector, useAppDispatch } from '../../hooks/useAppStore';
 import { logout } from '../../store/slices/authSlice';
-import { eventsService, notificationsService } from '../../services/dataService';
+import { eventsService, notificationsService, dashboardService } from '../../services/dataService';
 import { Event, Notification } from '../../types';
 import { format } from 'date-fns';
 import type { MainStackParamList } from '../../navigation/MainStackNavigator';
@@ -48,12 +48,29 @@ const DashboardScreen: React.FC = () => {
 
     const fetchDashboardData = async () => {
         try {
-            const [eventsData, notificationsData] = await Promise.all([
+            const [eventsData, notificationsData, statsData] = await Promise.all([
                 eventsService.getUpcoming().catch(() => []),
                 notificationsService.getAll({ limit: 5 }).catch(() => ({ results: [] })),
+                dashboardService.getStats().catch(() => null),
             ]);
+
             setUpcomingEvents(eventsData.slice(0, 3));
             setNotifications(notificationsData.results || []);
+
+            if (statsData) {
+                // Map API response to local state structure
+                // Assuming API returns { total_students: number, ... }
+                setStats({
+                    totalStudents: statsData.total_students || 0,
+                    totalTeachers: statsData.total_teachers || 0,
+                    totalCourses: statsData.total_courses || 0,
+                    upcomingEvents: statsData.upcoming_events || 0,
+                    pendingAssignments: statsData.pending_assignments || 0,
+                    todayAttendance: statsData.today_attendance || 0,
+                    unreadNotifications: statsData.unread_notifications || 0,
+                    pendingFees: statsData.pending_fees || 0,
+                });
+            }
         } catch (error) {
             console.log('Error fetching dashboard data:', error);
         }

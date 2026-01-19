@@ -1,5 +1,12 @@
-export const API_BASE_URL = 'http://localhost:8000/api';
+import { Platform } from 'react-native';
+const LOCAL_IP = '192.168.2.191';
 
+export const API_BASE_URL = Platform.select({
+    web: 'http://localhost:8000/api/v1',
+    default: `http://${LOCAL_IP}:8000/api/v1`,
+}) as string;
+
+// Web Portal API Paths structure
 export const apiPaths = {
     auth: {
         login: '/logins',
@@ -13,6 +20,9 @@ export const apiPaths = {
         checkMPIN: '/check-mpins',
         verifyPassword: '/verify-passwords',
     },
+    dashboard: {
+        stats: '/stats',
+    },
     users: {
         create: '/users',
         list: '/users',
@@ -22,6 +32,13 @@ export const apiPaths = {
         update: '/user',
         profiles: '/profiles',
         profileDetail: '/profile-detail',
+        profilePermissionsUpdate: '/profile-permissions-update',
+        manageProfile: '/manage-profile',
+        enabledUsers: '/enabled-users',
+        profileStatusUpdate: '/profile-status-update',
+        enabledProfileList: '/enabled-profile-list',
+        delete: '/users',
+        deleteProfile: '/profiles',
     },
     students: {
         create: '/students',
@@ -55,6 +72,12 @@ export const apiPaths = {
         update: '/courses',
         enabledList: '/list-enabled-courses',
     },
+    scheduleSlots: {
+        create: '/schedule-slots',
+        list: '/schedule-slots',
+        delete: '/schedule-slots',
+        update: '/schedule-slots',
+    },
     assignments: {
         create: '/assignments',
         list: '/assignments',
@@ -84,8 +107,11 @@ export const apiPaths = {
         list: '/books',
         delete: '/books',
         update: '/books',
+        updateCopies: '/update-books-copies',
         issueBook: '/book-issues',
         listIssues: '/book-issues',
+        deleteIssues: '/book-issues',
+        updateIssue: '/book-issues',
         bookReturn: '/book-return',
     },
     finance: {
@@ -104,7 +130,57 @@ export const apiPaths = {
     notifications: {
         list: '/notifications',
         send: '/notifications',
-        stats: '/notification-stats',
+        stats: '/stats',
+    },
+    hostels: {
+        create: '/hostels',
+        list: '/hostels',
+        delete: '/hostels',
+        update: '/hostels',
+    },
+    hostelRooms: {
+        create: '/hostel-rooms',
+        list: '/hostel-rooms',
+        delete: '/hostel-rooms',
+        update: '/hostel-rooms',
+        availableBeds: '/available-rooms-bed',
+    },
+    hostelMeals: {
+        create: '/hostel-meals',
+        list: '/hostel-meals',
+        delete: '/hostel-meals',
+        update: '/hostel-meals',
+    },
+    hostelAdmissions: {
+        create: '/hostel-admission',
+        list: '/hostel-admission',
+        delete: '/hostel-admission',
+        update: '/hostel-admission',
+    },
+    inventory: {
+        vehicles: {
+            create: '/vehicles',
+            list: '/vehicles',
+            delete: '/vehicles',
+            update: '/vehicles',
+            enabledList: '/list-enabled-vehicles',
+        },
+        assets: {
+            create: '/assets',
+            list: '/assets',
+            delete: '/assets',
+            update: '/assets',
+        },
+        maintenance: {
+            create: '/maintenance-logs',
+            list: '/maintenance-logs',
+            delete: '/maintenance-logs',
+            update: '/maintenance-logs',
+        },
+        dashboard: {
+            stats: '/inventory-dashboard-stats',
+            distribution: '/asset-category-distribution',
+        }
     },
     settings: {
         system: '/system',

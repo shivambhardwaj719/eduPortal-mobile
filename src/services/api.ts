@@ -1,6 +1,35 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
-import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 import { API_BASE_URL } from '../constants/apiPaths';
+
+// Platform-aware secure storage
+// Uses SecureStore on native, localStorage on web
+const storage = {
+    setItem: async (key: string, value: string): Promise<void> => {
+        if (Platform.OS === 'web') {
+            localStorage.setItem(key, value);
+        } else {
+            const SecureStore = require('expo-secure-store');
+            await SecureStore.setItemAsync(key, value);
+        }
+    },
+    getItem: async (key: string): Promise<string | null> => {
+        if (Platform.OS === 'web') {
+            return localStorage.getItem(key);
+        } else {
+            const SecureStore = require('expo-secure-store');
+            return await SecureStore.getItemAsync(key);
+        }
+    },
+    deleteItem: async (key: string): Promise<void> => {
+        if (Platform.OS === 'web') {
+            localStorage.removeItem(key);
+        } else {
+            const SecureStore = require('expo-secure-store');
+            await SecureStore.deleteItemAsync(key);
+        }
+    },
+};
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -17,21 +46,21 @@ const REFRESH_TOKEN_KEY = 'refresh_token';
 
 // Token management functions
 export const saveTokens = async (token: string, refreshToken: string): Promise<void> => {
-    await SecureStore.setItemAsync(TOKEN_KEY, token);
-    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+    await storage.setItem(TOKEN_KEY, token);
+    await storage.setItem(REFRESH_TOKEN_KEY, refreshToken);
 };
 
 export const getToken = async (): Promise<string | null> => {
-    return await SecureStore.getItemAsync(TOKEN_KEY);
+    return await storage.getItem(TOKEN_KEY);
 };
 
 export const getRefreshToken = async (): Promise<string | null> => {
-    return await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+    return await storage.getItem(REFRESH_TOKEN_KEY);
 };
 
 export const clearTokens = async (): Promise<void> => {
-    await SecureStore.deleteItemAsync(TOKEN_KEY);
-    await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+    await storage.deleteItem(TOKEN_KEY);
+    await storage.deleteItem(REFRESH_TOKEN_KEY);
 };
 
 // Request interceptor to add auth token
