@@ -1,0 +1,113 @@
+export const API_BASE_URL = 'http://localhost:8000/api';
+
+export const apiPaths = {
+    auth: {
+        login: '/logins',
+        logOut: '/logouts',
+        refreshToken: '/refreshtokens',
+        checkDomain: '/check-domains',
+        forgotPassword: '/send-reset-password-emails',
+        resetPassword: '/setpassword',
+        userProfile: '/user-profiles',
+        setMPIN: '/set-mpins',
+        checkMPIN: '/check-mpins',
+        verifyPassword: '/verify-passwords',
+    },
+    users: {
+        create: '/users',
+        list: '/users',
+        permissions: '/permissions',
+        managePermissions: '/manage-permissions',
+        status: '/user-status',
+        update: '/user',
+        profiles: '/profiles',
+        profileDetail: '/profile-detail',
+    },
+    students: {
+        create: '/students',
+        list: '/students',
+        delete: '/students',
+        update: '/students',
+    },
+    studentClasses: {
+        create: '/student-classes',
+        list: '/student-classes',
+        delete: '/student-classes',
+        update: '/student-classes',
+    },
+    faculties: {
+        create: '/faculties',
+        list: '/faculties',
+        delete: '/faculties',
+        update: '/faculties',
+        enabledList: '/enable-faculty-list',
+    },
+    grades: {
+        create: '/grades',
+        list: '/grades',
+        delete: '/grades',
+        update: '/grades',
+    },
+    courses: {
+        create: '/courses',
+        list: '/courses',
+        delete: '/courses',
+        update: '/courses',
+        enabledList: '/list-enabled-courses',
+    },
+    assignments: {
+        create: '/assignments',
+        list: '/assignments',
+        delete: '/assignments',
+        update: '/assignments',
+    },
+    attendance: {
+        list: '/student-attendances',
+        create: '/student-attendances',
+        update: '/student-attendances',
+        studentList: '/enable-student-list',
+    },
+    exams: {
+        create: '/exams',
+        list: '/exams',
+        delete: '/exams',
+        update: '/exams',
+    },
+    examResults: {
+        create: '/exam-results',
+        list: '/exam-results',
+        delete: '/exam-results',
+        update: '/exam-results',
+    },
+    library: {
+        create: '/books',
+        list: '/books',
+        delete: '/books',
+        update: '/books',
+        issueBook: '/book-issues',
+        listIssues: '/book-issues',
+        bookReturn: '/book-return',
+    },
+    finance: {
+        listFees: '/student-fees',
+        createFee: '/student-fees',
+        listStructures: '/fee-structures',
+        listExpenses: '/school-expanses',
+        listScholarships: '/scholarships',
+    },
+    events: {
+        create: '/events',
+        list: '/events',
+        delete: '/events',
+        update: '/events',
+    },
+    notifications: {
+        list: '/notifications',
+        send: '/notifications',
+        stats: '/notification-stats',
+    },
+    settings: {
+        system: '/system',
+        school: '/school',
+    }
+};

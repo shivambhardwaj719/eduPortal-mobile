@@ -1,0 +1,13 @@
+export { default as LoginScreen } from './auth/LoginScreen';
+export { default as ForgotPasswordScreen } from './auth/ForgotPasswordScreen';
+export { default as DashboardScreen } from './main/DashboardScreen';
+export { default as AcademicsScreen } from './main/AcademicsScreen';
+export { default as AttendanceScreen } from './main/AttendanceScreen';
+export { default as FinanceScreen } from './main/FinanceScreen';
+export { default as MoreScreen } from './main/MoreScreen';
+export { default as NotificationsScreen } from './main/NotificationsScreen';
+export { default as EventsScreen } from './main/EventsScreen';
+export { default as LibraryScreen } from './main/LibraryScreen';
+export { default as ScheduleScreen } from './main/ScheduleScreen';
+export { default as SettingsScreen } from './main/SettingsScreen';
+export { default as ProfileScreen } from './main/ProfileScreen';
