@@ -8,6 +8,7 @@ import LibraryScreen from '../screens/main/LibraryScreen';
 import ScheduleScreen from '../screens/main/ScheduleScreen';
 import SettingsScreen from '../screens/main/SettingsScreen';
 import ProfileScreen from '../screens/main/ProfileScreen';
+import ResultsScreen from '../screens/main/ResultsScreen';
 
 export type MainStackParamList = {
     MainTabs: undefined;
@@ -17,6 +18,7 @@ export type MainStackParamList = {
     Schedule: undefined;
     Settings: undefined;
     Profile: undefined;
+    Results: undefined;
 };
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
@@ -36,6 +38,7 @@ const MainStackNavigator: React.FC = () => {
             <Stack.Screen name="Schedule" component={ScheduleScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
+            <Stack.Screen name="Results" component={ResultsScreen} />
         </Stack.Navigator>
     );
 };

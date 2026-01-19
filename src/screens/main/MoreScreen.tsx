@@ -45,7 +45,7 @@ const MoreScreen: React.FC = () => {
             items: [
                 { icon: 'library', title: 'Library', subtitle: 'Books & Resources', color: Colors.primary[500], screen: 'Library', badge: 2 },
                 { icon: 'calendar', title: 'Events', subtitle: 'Upcoming Activities', color: Colors.accent.pink, screen: 'Events' },
-                { icon: 'document-text', title: 'Results', subtitle: 'Exam Scores', color: Colors.success.main },
+                { icon: 'document-text', title: 'Results', subtitle: 'Exam Scores', color: Colors.success.main, screen: 'Results' },
                 { icon: 'time', title: 'Schedule', subtitle: 'Class Timetable', color: Colors.info.main, screen: 'Schedule' },
             ],
         },

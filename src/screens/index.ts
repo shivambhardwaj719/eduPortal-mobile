@@ -11,3 +11,4 @@ export { default as LibraryScreen } from './main/LibraryScreen';
 export { default as ScheduleScreen } from './main/ScheduleScreen';
 export { default as SettingsScreen } from './main/SettingsScreen';
 export { default as ProfileScreen } from './main/ProfileScreen';
+export { default as ResultsScreen } from './main/ResultsScreen';
