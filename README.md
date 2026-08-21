@@ -1,6 +1,6 @@
-# EduPortal Mobile Application
+# School Management System Mobile Application
 
-A modern React Native mobile application for the EduPortal Education Management System, built with Expo and TypeScript.
+A modern React Native mobile application for the School Management System Education Management System, built with Expo and TypeScript.
 
 ## 🚀 Features
 
@@ -101,8 +101,8 @@ A modern React Native mobile application for the EduPortal Education Management 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-repo/eduportal-mobile.git
-cd eduPortal-mobile
+git clone https://github.com/your-repo/school_management_system_mobile.git
+cd school_management_system_mobile
 ```
 
 ### 2. Install dependencies
@@ -119,7 +119,7 @@ Create a `.env` file in the root directory:
 
 ```env
 EXPO_PUBLIC_API_URL=http://localhost:8000/api
-EXPO_PUBLIC_APP_NAME=EduPortal
+EXPO_PUBLIC_APP_NAME=school_management_system_mobile
 ```
 
 ### 4. Start the development server
@@ -137,7 +137,7 @@ npx expo start
 ## 📁 Project Structure
 
 ```
-eduPortal-mobile/
+school_management_system_mobile/
 ├── assets/                 # App assets (icons, splash)
 ├── src/
 │   ├── components/        # Reusable components
